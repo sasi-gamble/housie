@@ -32,14 +32,14 @@ export default function ActionButtons({
         onClick={onGenerate}
         disabled={generateDisabled}
       >
-        {isGameComplete ? 'All Numbers Called' : 'Generate Next Number'}
+        {isGameComplete ? 'Complete' : 'Generate'}
       </button>
       <button
         className="btn btn-danger-outline"
         onClick={handleReset}
         disabled={generatedCount === 0}
       >
-        Reset Game
+        Reset
       </button>
 
       {showConfirm && (

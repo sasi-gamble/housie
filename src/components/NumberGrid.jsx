@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 
 export default function NumberGrid({
   generatedNumbers,
@@ -16,6 +16,16 @@ export default function NumberGrid({
     for (let i = 1; i <= 100; i++) arr.push(i);
     return arr;
   }, []);
+
+  // Auto-scroll to current number
+  useEffect(() => {
+    if (currentNumber !== null) {
+      const tile = document.querySelector(`[data-number="${currentNumber}"]`);
+      if (tile) {
+        tile.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+  }, [currentNumber]);
 
   return (
     <div className="grid-section">

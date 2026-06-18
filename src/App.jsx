@@ -8,7 +8,7 @@ import ActionButtons from './components/ActionButtons';
 import PreviousNumbers from './components/PreviousNumbers';
 import NumberGrid from './components/NumberGrid';
 import LoginModal from './components/LoginModal';
-import FlyingNumber from './components/FlyingNumber';
+
 
 export default function App() {
   const {
@@ -25,7 +25,6 @@ export default function App() {
   } = useGameState();
 
   const [showLogin, setShowLogin] = useState(false);
-  const [flyingNum, setFlyingNum] = useState(null);
 
   // Screen Wake Lock
   useEffect(() => {
@@ -33,34 +32,19 @@ export default function App() {
     return cleanup;
   }, []);
 
-  // Trigger flying animation from a grid tile to the current number card
-  const triggerFly = useCallback((num) => {
-    const tile = document.querySelector(`[data-number="${num}"]`);
-    const card = document.querySelector('.current-number-card');
-    if (tile && card) {
-      setFlyingNum({
-        number: num,
-        from: tile.getBoundingClientRect(),
-        to: card.getBoundingClientRect(),
-      });
-    }
-  }, []);
-
-  // Animated random generate
+  // Instant random generate
   const handleGenerate = useCallback(() => {
     const num = pickRandomNumber(generatedNumbers);
     if (num === null) return;
-    triggerFly(num);
     callNumber(num);
-  }, [generatedNumbers, triggerFly, callNumber]);
+  }, [generatedNumbers, callNumber]);
 
-  // Animated manual select (operator)
+  // Instant manual select (operator)
   const handleSelect = useCallback(
     (num) => {
-      triggerFly(num);
       selectNumber(num);
     },
-    [triggerFly, selectNumber]
+    [selectNumber]
   );
 
   const progress = (generatedNumbers.length / 100) * 100;
@@ -81,21 +65,23 @@ export default function App() {
       </div>
 
       <main className="main-content">
-        <CurrentNumber
-          currentNumber={currentNumber}
-          isGameComplete={isGameComplete}
-          calledCount={generatedNumbers.length}
-        />
+        <div className="control-panel">
+          <CurrentNumber
+            currentNumber={currentNumber}
+            isGameComplete={isGameComplete}
+            calledCount={generatedNumbers.length}
+          />
 
-        <ActionButtons
-          onGenerate={handleGenerate}
-          onReset={resetGame}
-          isGameComplete={isGameComplete}
-          isOperator={isOperator}
-          generatedCount={generatedNumbers.length}
-        />
+          <ActionButtons
+            onGenerate={handleGenerate}
+            onReset={resetGame}
+            isGameComplete={isGameComplete}
+            isOperator={isOperator}
+            generatedCount={generatedNumbers.length}
+          />
 
-        <PreviousNumbers history={history} />
+          <PreviousNumbers history={history} />
+        </div>
 
         <NumberGrid
           generatedNumbers={generatedNumbers}
@@ -104,15 +90,6 @@ export default function App() {
           onSelectNumber={handleSelect}
         />
       </main>
-
-      {flyingNum && (
-        <FlyingNumber
-          number={flyingNum.number}
-          fromRect={flyingNum.from}
-          toRect={flyingNum.to}
-          onComplete={() => setFlyingNum(null)}
-        />
-      )}
 
       {showLogin && (
         <LoginModal
