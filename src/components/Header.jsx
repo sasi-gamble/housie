@@ -10,7 +10,7 @@ export default function Header({ onOpenLogin, isOperator, onLogout }) {
     pressTimerRef.current = setTimeout(() => {
       didLongPressRef.current = true;
       onLogout();
-    }, 3000);
+    }, 1000);
   }, [isOperator, onLogout]);
 
   const handlePointerUp = useCallback(() => {
