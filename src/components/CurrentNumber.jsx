@@ -14,7 +14,7 @@ export default function CurrentNumber({ currentNumber, isGameComplete, calledCou
             {currentNumber !== null ? currentNumber : '—'}
           </span>
           <span className="current-number-counter">
-            <strong>{calledCount}</strong> of 100 called
+            <strong>{calledCount}</strong> of 90 called
           </span>
         </>
       )}

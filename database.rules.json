@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "games": {
+      "$gameId": {
+        ".read": true,
+        ".write": "auth != null && (!data.child('operatorUid').exists() || data.child('operatorUid').val() === auth.uid)"
+      }
+    }
+  }
+}
