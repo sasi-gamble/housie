@@ -3,16 +3,10 @@
     "games": {
       "$gameId": {
         ".read": true,
+        ".write": "auth != null",
         "operatorUid": {
-          ".write": "auth != null && (!data.exists() || data.val() === auth.uid)"
-        },
-        "calledNumbers": { ".write": true },
-        "currentNumber": { ".write": true },
-        "queuedNumber": { ".write": true },
-        "history": { ".write": true },
-        "status": { ".write": true },
-        "lastUpdatedAt": { ".write": true },
-        "lastUpdatedBy": { ".write": true }
+          ".validate": "!data.exists() || data.val() === auth.uid"
+        }
       }
     }
   }
