@@ -5,7 +5,7 @@
 export function pickRandomNumber(generatedNumbers) {
   const generated = new Set(generatedNumbers);
   const available = [];
-  for (let i = 1; i <= 100; i++) {
+  for (let i = 1; i <= 90; i++) {
     if (!generated.has(i)) {
       available.push(i);
     }

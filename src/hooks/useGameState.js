@@ -31,7 +31,7 @@ export function useGameState() {
     saveGameState({ generatedNumbers, currentNumber, history });
   }, [generatedNumbers, currentNumber, history]);
 
-  const isGameComplete = generatedNumbers.length >= 100;
+  const isGameComplete = generatedNumbers.length >= 90;
 
   const callNumber = useCallback((num) => {
     setGeneratedNumbers((prev) => [...prev, num]);
@@ -63,7 +63,7 @@ export function useGameState() {
   }, []);
 
   const login = useCallback((password) => {
-    if (password === 'sasi1234') {
+    if (password === 'sasi') {
       setIsOperator(true);
       try {
         sessionStorage.setItem(OPERATOR_SESSION_KEY, '1');

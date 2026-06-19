@@ -47,7 +47,7 @@ export default function App() {
     [selectNumber]
   );
 
-  const progress = (generatedNumbers.length / 100) * 100;
+  const progress = (generatedNumbers.length / 90) * 100;
 
   return (
     <div className="app">

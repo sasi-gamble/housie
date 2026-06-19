@@ -13,7 +13,7 @@ export default function NumberGrid({
 
   const numbers = useMemo(() => {
     const arr = [];
-    for (let i = 1; i <= 100; i++) arr.push(i);
+    for (let i = 1; i <= 90; i++) arr.push(i);
     return arr;
   }, []);
 

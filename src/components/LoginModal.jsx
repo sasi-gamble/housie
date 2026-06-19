@@ -22,17 +22,17 @@ export default function LoginModal({ onClose, onLogin }) {
         <h2 className="modal-title">Settings</h2>
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-group">
-            <label htmlFor="login-email" className="form-label">
-              Email
+            <label htmlFor="login-username" className="form-label">
+              Username
             </label>
             <input
-              id="login-email"
-              type="email"
+              id="login-username"
+              type="text"
               className="form-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter email"
-              autoComplete="email"
+              placeholder="Enter username"
+              autoComplete="username"
             />
           </div>
           <div className="form-group">
