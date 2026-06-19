@@ -27,13 +27,15 @@ export default function ActionButtons({
 
   return (
     <div className="action-buttons">
-      <button
-        className="btn btn-primary"
-        onClick={onGenerate}
-        disabled={generateDisabled}
-      >
-        {isGameComplete ? 'Complete' : 'Generate'}
-      </button>
+      {!isOperator && (
+        <button
+          className="btn btn-primary"
+          onClick={onGenerate}
+          disabled={generateDisabled}
+        >
+          {isGameComplete ? 'Complete' : 'Generate'}
+        </button>
+      )}
       <button
         className="btn btn-danger-outline"
         onClick={handleReset}

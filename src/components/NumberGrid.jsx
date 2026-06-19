@@ -3,6 +3,7 @@ import { useMemo, useEffect } from 'react';
 export default function NumberGrid({
   generatedNumbers,
   currentNumber,
+  queuedNumber,
   isOperator,
   onSelectNumber,
 }) {
@@ -35,12 +36,16 @@ export default function NumberGrid({
           const isCurrent = num === currentNumber;
           const isGenerated = generatedSet.has(num);
           const isAvailable = !isGenerated;
+          const isQueued = num === queuedNumber;
 
           let className = 'grid-tile';
           if (isCurrent) {
             className += ' grid-tile-current';
           } else if (isGenerated) {
             className += ' grid-tile-generated';
+          } else if (isOperator && isQueued) {
+            // Only show queued style to operator
+            className += ' grid-tile-queued';
           } else {
             className += ' grid-tile-available';
           }
@@ -60,7 +65,7 @@ export default function NumberGrid({
                   onSelectNumber(num);
                 }
               }}
-              aria-label={`Number ${num}${isGenerated ? ', called' : ''}`}
+              aria-label={`Number ${num}${isGenerated ? ', called' : ''}${isQueued ? ', queued' : ''}`}
             >
               {num}
             </button>

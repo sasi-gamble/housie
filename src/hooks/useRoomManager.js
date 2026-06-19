@@ -40,17 +40,10 @@ export async function createRoom() {
         calledNumbers: [],
         history: [],
         status: 'idle',
-        operatorUid: user.uid,
+        operatorUid: null,
         lastUpdatedAt: getServerTimestampValue(),
-        lastUpdatedBy: 'operator',
+        lastUpdatedBy: 'system',
       });
-
-      // Remember we're the operator for this room
-      try {
-        sessionStorage.setItem(`shaousi_op_${code}`, '1');
-      } catch {
-        // Silently fail
-      }
 
       return code;
     } catch (err) {

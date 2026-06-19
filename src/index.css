@@ -406,6 +406,12 @@ body {
   border: 3px solid var(--primary-deep);
 }
 
+.grid-tile-queued {
+  background: #facc15;
+  color: #000;
+  border-color: #eab308;
+}
+
 .grid-tile-selectable {
   cursor: pointer;
 }

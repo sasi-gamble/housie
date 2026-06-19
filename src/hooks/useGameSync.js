@@ -16,6 +16,7 @@ export function useGameSync(gameId) {
   const [history, setHistory] = useState([]);
   const [status, setStatus] = useState('idle');
   const [operatorUid, setOperatorUid] = useState(null);
+  const [queuedNumber, setQueuedNumber] = useState(null);
 
   // Local state
   const [isOperator, setIsOperator] = useState(false);
@@ -53,16 +54,19 @@ export function useGameSync(gameId) {
           const curr = data.currentNumber ?? null;
           const st = data.status || 'idle';
           const opUid = data.operatorUid || null;
+          const qNum = data.queuedNumber ?? null;
 
           setCalledNumbers(cn);
           setCurrentNumber(curr);
           setHistory(hist);
           setStatus(st);
           setOperatorUid(opUid);
+          setQueuedNumber(qNum);
 
-          // Check if current user is the operator
+          // Check if current user is the operator AND they have the session flag
           const currentUser = auth.currentUser;
-          setIsOperator(currentUser != null && opUid === currentUser.uid);
+          const isSessionOp = sessionStorage.getItem(`shaousi_op_${gameId}`) === '1';
+          setIsOperator(currentUser != null && opUid === currentUser.uid && isSessionOp);
 
           // Cache to localStorage
           saveGameState({
@@ -96,55 +100,64 @@ export function useGameSync(gameId) {
     return () => unsubscribe();
   }, []);
 
-  // Call a specific number (write to Firebase)
-  const callNumber = useCallback(
+  // Generate next number (Viewer clicks Generate)
+  const generateNext = useCallback(async () => {
+    if (!gameId) return;
+    const currentUser = auth.currentUser;
+    if (!currentUser) return;
+
+    let num = queuedNumber;
+    if (num === null || num === undefined) {
+      num = pickRandomNumber(calledNumbers);
+    }
+    
+    if (num === null) return; // No numbers left
+
+    const newCalled = [...calledNumbers, num];
+    const newHistory = [num, ...history].slice(0, 10);
+    const newStatus = newCalled.length >= 90 ? 'completed' : 'active';
+
+    const gameRef = ref(db, `games/${gameId}`);
+    try {
+      await update(gameRef, {
+        currentNumber: num,
+        calledNumbers: newCalled,
+        history: newHistory,
+        status: newStatus,
+        queuedNumber: null, // clear queue
+        lastUpdatedAt: getServerTimestampValue(),
+        lastUpdatedBy: isOperator ? 'operator' : 'viewer',
+      });
+    } catch (err) {
+      console.error('Failed to call number:', err);
+    }
+  }, [gameId, calledNumbers, history, queuedNumber, isOperator]);
+
+  // Select a specific number (operator queues it)
+  const selectNumber = useCallback(
     async (num) => {
       if (!isOperator || !gameId) return;
-      const currentUser = auth.currentUser;
-      if (!currentUser) return;
+      if (calledNumbers.includes(num)) return; // already called
 
-      const newCalled = [...calledNumbers, num];
-      const newHistory = [num, ...history].slice(0, 10);
-      const newStatus = newCalled.length >= 90 ? 'completed' : 'active';
+      const newQueued = queuedNumber === num ? null : num;
 
       const gameRef = ref(db, `games/${gameId}`);
       try {
         await update(gameRef, {
-          currentNumber: num,
-          calledNumbers: newCalled,
-          history: newHistory,
-          status: newStatus,
+          queuedNumber: newQueued,
           lastUpdatedAt: getServerTimestampValue(),
           lastUpdatedBy: 'operator',
         });
       } catch (err) {
-        console.error('Failed to call number:', err);
+        console.error('Failed to queue number:', err);
       }
     },
-    [isOperator, gameId, calledNumbers, history]
-  );
-
-  // Generate a random number and call it
-  const generateNext = useCallback(() => {
-    const num = pickRandomNumber(calledNumbers);
-    if (num !== null) {
-      callNumber(num);
-    }
-  }, [calledNumbers, callNumber]);
-
-  // Select a specific number (operator manual pick)
-  const selectNumber = useCallback(
-    (num) => {
-      if (!isOperator) return;
-      if (calledNumbers.includes(num)) return;
-      callNumber(num);
-    },
-    [isOperator, calledNumbers, callNumber]
+    [isOperator, gameId, calledNumbers, queuedNumber]
   );
 
   // Reset the game
   const resetGame = useCallback(async () => {
-    if (!isOperator || !gameId) return;
+    if (!gameId) return;
     const currentUser = auth.currentUser;
     if (!currentUser) return;
 
@@ -155,14 +168,15 @@ export function useGameSync(gameId) {
         calledNumbers: [],
         history: [],
         status: 'idle',
+        queuedNumber: null,
         lastUpdatedAt: getServerTimestampValue(),
-        lastUpdatedBy: 'operator',
+        lastUpdatedBy: isOperator ? 'operator' : 'viewer',
       });
       clearGameState();
     } catch (err) {
       console.error('Failed to reset game:', err);
     }
-  }, [isOperator, gameId]);
+  }, [gameId, isOperator]);
 
   // Claim operator role for this room
   const claimOperator = useCallback(async () => {
@@ -239,6 +253,7 @@ export function useGameSync(gameId) {
   return {
     currentNumber,
     calledNumbers,
+    queuedNumber,
     history,
     status,
     isOperator,

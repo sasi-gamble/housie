@@ -33,23 +33,10 @@ export default function Header({ onOpenLogin, isOperator, onLogout, gameId, onSh
 
   return (
     <header className="header">
-      {onBack && (
-        <button
-          className="header-icon-btn header-back-btn"
-          onClick={onBack}
-          aria-label="Back to Lobby"
-          title="Back to Lobby"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
-      )}
-
       <h1 className="header-title">S'haousi</h1>
 
       <div className="header-actions">
-        {gameId && (
+        {isOperator && gameId && (
           <button
             className="header-room-code"
             onClick={onShare}

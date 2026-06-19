@@ -18,6 +18,7 @@ export default function GamePage() {
   const {
     currentNumber,
     calledNumbers,
+    queuedNumber,
     history,
     isOperator,
     isGameComplete,
@@ -112,6 +113,7 @@ export default function GamePage() {
         <NumberGrid
           generatedNumbers={calledNumbers}
           currentNumber={currentNumber}
+          queuedNumber={queuedNumber}
           isOperator={isOperator}
           onSelectNumber={handleSelect}
         />
