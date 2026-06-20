@@ -179,6 +179,7 @@ export function useGameSync(gameId) {
   }, [gameId, isOperator]);
 
   // Claim operator role for this room
+  // Any phone with the correct password can become operator, replacing the previous one
   const claimOperator = useCallback(async () => {
     if (!gameId) return false;
     const currentUser = await waitForAuth();
@@ -186,14 +187,6 @@ export function useGameSync(gameId) {
 
     const gameRef = ref(db, `games/${gameId}`);
     try {
-      // Check if room already has an operator
-      const snapshot = await get(gameRef);
-      const data = snapshot.val();
-      if (data && data.operatorUid && data.operatorUid !== currentUser.uid) {
-        // Room already has a different operator
-        return false;
-      }
-
       await update(gameRef, {
         operatorUid: currentUser.uid,
         lastUpdatedAt: getServerTimestampValue(),

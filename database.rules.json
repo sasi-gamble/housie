@@ -3,10 +3,7 @@
     "games": {
       "$gameId": {
         ".read": true,
-        ".write": "auth != null",
-        "operatorUid": {
-          ".validate": "!data.exists() || data.val() === auth.uid"
-        }
+        ".write": "auth != null"
       }
     }
   }

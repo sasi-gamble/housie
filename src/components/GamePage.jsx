@@ -52,7 +52,7 @@ export default function GamePage() {
 
   const handleLogin = useCallback(
     async (password) => {
-      if (password === 'sasi') {
+      if (password === 'sas') {
         const success = await claimOperator();
         return success;
       }
